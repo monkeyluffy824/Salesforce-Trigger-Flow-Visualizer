@@ -1,17 +1,46 @@
 <head>
+    <link rel="stylesheet" href="./shoelace-2.20.1/package/cdn/themes/light.css" />
     
+	<link rel="stylesheet" href="./style.css">
 </head>
 <body>
-		<div>
-		   <h2>Welcome to Salesforce Object Trigger Flow Visualizer!!<h2>
-		</div>
-		<div>
-		   <p>
-			This is an browser extension which can be used to visulaize the visualize order of flows and trigger execution, in diagrams using mermaid.js
-		   </p>
-		</div>
-		<div>
-			<button  id="connectToOrgViaBackend" >Connect to Salesforce</button>
-		</div>
+	<div class="alert-toast">
+		<sl-alert variant="success" duration="3000" closable id="success1">
+			<strong>Connected Successfully</strong><br />
+			Triggerable SObjects are fetched.
+		</sl-alert>
+		<sl-alert variant="warning" duration="3000" closable id="failure1">
+			<strong>Not Able to Connect </strong><br />
+			Please reopen the extesnion again.
+		 </sl-alert>
+	</div>
+	<sl-card class="top">
+	   <section class="hero">
+			<div style="margin-top: 1rem;">
+			   <h2>Welcome to Salesforce Object Trigger Flow Visualizer!!<h2>
+			</div>
+			<div class="contact-form">
+			   <p>
+				This is an browser extension which can be used to visulaize the visualize order of flows and trigger execution, in diagrams using mermaid.js
+			   </p>
+			   <div>
+				  <sl-select pill id="urlMenu" placeholder="Select one URL"></sl-select>
+			   </div>
+			   <sl-button  id="connectToOrgViaBackend" size="medium" pill variant="primary" >Connect to Salesforce</sl-button>
+			</div>
+			<h3 style="margin-top: 1rem;">How To Use</h3> 
+			<ul>
+				   <li>Login to your org and once logged in open this extension.</li>
+				   <li>You can see the currently loggged in Orgs, in right side menu.</li>
+				   <li>Select the org and click on connect to salesforce button.</li>
+				   <li>Now you can see all triggerable objects present in that org that can be visualized.</li>
+				   <li>To search enter text in the search bar and press ENTER.</li>
+			</ul>
+			
+		</section>
+		<section id="sObjectSelection">
+		</section>
+	</sl-card>
 	<script src="popup.js"></script>
+	<script type="module" src="shoelaceLoader.js"></script>
 </body>

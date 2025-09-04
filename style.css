@@ -1,0 +1,62 @@
+body{
+        font-family: sans-serif;
+        background-color: #fff4e6;
+        margin: 0;
+        padding: 2rem;
+      }
+      .container{
+        max-width:1200px;
+        margin:auto;
+      }
+      .hero{
+          display: grid;
+          grid-template-columns: 1fr;
+          align-items: center;
+          gap: 2rem;
+          padding: 4rem 0;
+      }
+      .projects {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    sl-card {
+       border: 1px  #b23a48;
+      --border-radius: 1rem;
+      font-size: medium;
+      
+    }
+
+    .contact-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    h1, h2 {
+      color: #222;
+    }
+
+    .tags sl-tag {
+      margin-right: 0.5rem;
+      margin-top: 0.5rem;
+    }
+	
+	.seperator{
+		margin-left: 20rem;
+	}
+
+.top{
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.table{
+	max-height: 500px;
+	overflow-y: auto;
+    overflow-x: auto;
+	width: 100%;
+	margin-top: 0.5rem;
+}
