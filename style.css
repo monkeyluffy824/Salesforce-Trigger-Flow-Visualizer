@@ -60,3 +60,40 @@ body{
 	width: 100%;
 	margin-top: 0.5rem;
 }
+
+.dettab {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+.td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+.divider{
+	--spacing: 1rem;;
+}
+
+.protable {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 1rem;
+	  font-size:medium
+	  justify: center;
+    }
+	
+.table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--sl-color-neutral-300);
+    }
+.bwindow{
+	display: grid;
+      grid-template-columns: 1fr ;
+      gap: 3rem;
+      margin-top: 1rem;
+	  font-size:medium
+	  justify: center;
+}
