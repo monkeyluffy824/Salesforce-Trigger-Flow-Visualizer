@@ -96,7 +96,8 @@ let insertSObject= undefined;
 let updateSobject= undefined;
 let deleteSObject= undefined;
 let undeleteSObject= undefined;
-
+let selectedObjectValidCount=0;
+let selectedObjectAssignCount=0;
 async function getSalesforceSessionDetails(){
 	let queryOptions={
 		lastFocusedWindow: true,
@@ -107,13 +108,17 @@ async function getSalesforceSessionDetails(){
 		const  buttonElement= document.getElementById('connectToOrgViaBackend');
 		buttonElement.disabled=true;
 		console.log(tabs);
+		let setURLS = new Set();
 		if(tabs.length>0){
 			const urlMenu= document.getElementById('urlMenu');
 			for(let k in tabs){
-				const opt = document.createElement('sl-option');
-				opt.value= tabs[k].url;
-				opt.textContent = tabs[k].url;
-				urlMenu.appendChild(opt);
+				if(setURLS.has(new URL(tabs[k].url).hostname)?false:setURLS.add(new URL(tabs[k].url).hostname)){
+					const opt = document.createElement('sl-option');
+					opt.value= tabs[k].url;
+					opt.textContent = tabs[k].url;
+					urlMenu.appendChild(opt);
+				}
+				
 			}
 			
 		}else{
@@ -243,6 +248,18 @@ function addingDetailsWindow(detailsWindow){
 						getTriggerDetailsButton.textContent="Get Trigger Details";
 						buttonsDiv.appendChild(getTriggerDetailsButton);
 						getTriggerDetailsButton.addEventListener('click',async ()=>{
+							let validationQuery= `Select Count(Id) FROM ValidationRule where Active =true AND EntityDefinition.label = '${selectedSObject}'`;
+							const validationDetails= await toolingQuery(validationQuery);
+							let validationRecords= validationDetails.records;
+							if(validationRecords && validationRecords.length>0){
+								selectedObjectValidCount= validationRecords[0].expr0;
+							}
+							let assignQuery=`Select count(Id) FROM AssignmentRule where Active = true and EntityDefinition.Label ='${selectedSObject}'`;
+							const assignDetails= await toolingQuery(assignQuery);
+							let assignRecords = assignDetails.records;
+							if(assignRecords && assignRecords.length>0){
+								selectedObjectAssignCount= assignRecords[0].expr0;
+							}
 							let query=`SELECT Name,Status,UsageBeforeInsert,UsageAfterInsert,UsageAfterDelete,UsageAfterUndelete,UsageAfterUpdate,UsageBeforeDelete,TableEnumOrId,UsageBeforeUpdate,UsageIsBulk,IsValid FROM ApexTrigger where TableEnumOrId ='${nameOfObject}'`;
 							const triggerDetails=await toolingQuery(query);
 							let records= triggerDetails.records;
@@ -435,13 +452,15 @@ function drawMermaid(typ){
 		obj=undeleteSObject;
 	}
 	let diagram='';
-	diagram = `journey\n    title ${selectedSObject} ${typ.toUpperCase()} Execution Flow\n`;
-    diagram+= `    section Before\n      [Validation Rules] : 4\n`;
+	diagram = `journey\n    title  ${typ.toUpperCase()} ${selectedSObject} Execution\n`;
+    diagram+= `    section Before \n`;
   if (obj.before && obj.before.length > 0) {
     obj.before.forEach(step => {
       diagram += `      [Trigger] ${step} : 5\n`;
     });
+	
   }
+  diagram+=`\n      [Total Custom Validation Rules] ${selectedObjectValidCount}: 4 \n`
   diagram += `    section After\n`;
   
   if (obj.after && obj.after.length > 0) {
@@ -451,7 +470,7 @@ function drawMermaid(typ){
     });
   }
   
-  diagram+= `      [Assignment Rules] :4 \n`;
+  diagram+= `      [Total Assignment Rules] ${selectedObjectAssignCount} :4 \n`;
 
   return diagram;
 	

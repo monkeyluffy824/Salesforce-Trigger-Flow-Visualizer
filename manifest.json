@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Salesforce Object Trigger Flow Visualizer",
+  "name": "Salesforce Object Trigger Visualizer",
   "version": "1.0",
-  "description": "This is an browser extension which can be used to visulaize the visualize order of flows and trigger execution, in diagrams using mermaid.js",
+  "description": "This is an browser extension which can be used to visulaize the visualize order of trigger execution, in diagrams using mermaid.js",
   "icons": {
     "48": "icons/visual_48.png",
     "64": "icons/visual_64.png"
