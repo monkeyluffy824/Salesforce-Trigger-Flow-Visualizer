@@ -6,6 +6,7 @@ Features
 •	Display Total No of Assignment Rules triggered during DML operations.
 •	Visualize the execution flow using Mermaid.js journey diagrams.
 •	Dynamically generate diagrams per selected operation (Insert, Update, etc.).
+
 How It Works
 1.	Queries Salesforce Tooling API for:
    - ApexTrigger
