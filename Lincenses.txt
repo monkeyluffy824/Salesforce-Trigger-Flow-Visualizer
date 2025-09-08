@@ -1,0 +1,5 @@
+Mermaid.js - MIT License 
+https://github.com/mermaid-js/mermaid/blob/develop/LICENSE
+
+Shoelace  - MIT License
+https://github.com/shoelace-style/shoelace/blob/next/LICENSE.md

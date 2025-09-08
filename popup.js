@@ -260,7 +260,7 @@ function addingDetailsWindow(detailsWindow){
 							if(assignRecords && assignRecords.length>0){
 								selectedObjectAssignCount= assignRecords[0].expr0;
 							}
-							let query=`SELECT Name,Status,UsageBeforeInsert,UsageAfterInsert,UsageAfterDelete,UsageAfterUndelete,UsageAfterUpdate,UsageBeforeDelete,TableEnumOrId,UsageBeforeUpdate,UsageIsBulk,IsValid FROM ApexTrigger where TableEnumOrId ='${nameOfObject}'`;
+							let query=`SELECT Name,Status,UsageBeforeInsert,UsageAfterInsert,UsageAfterDelete,UsageAfterUndelete,UsageAfterUpdate,UsageBeforeDelete,TableEnumOrId,UsageBeforeUpdate,UsageIsBulk,IsValid,LastModifiedBy.Name, LastModifiedDate,LengthWithoutComments FROM ApexTrigger where TableEnumOrId ='${nameOfObject}' `;
 							const triggerDetails=await toolingQuery(query);
 							let records= triggerDetails.records;
 							let insertDetails={before:[],after:[]};
@@ -269,38 +269,38 @@ function addingDetailsWindow(detailsWindow){
 							let undeleteDetails={after:[]};
 							for(let tri of records){
 								if(tri.UsageBeforeInsert){
-									if(!insertDetails.before.includes(tri.Name)){
-										insertDetails.before.push(tri.Name);
+									if(!insertDetails.before.includes(tri)){
+										insertDetails.before.push(tri);
 									}
 								}
 								if(tri.UsageAfterInsert){
-									if(!insertDetails.after.includes(tri.Name)){
-										insertDetails.after.push(tri.Name);
+									if(!insertDetails.after.includes(tri)){
+										insertDetails.after.push(tri);
 									}
 								}
 								if(tri.UsageBeforeUpdate){
-									if(!updateDetails.before.includes(tri.Name)){
-										updateDetails.before.push(tri.Name);
+									if(!updateDetails.before.includes(tri)){
+										updateDetails.before.push(tri);
 									}
 								}
 								if(tri.UsageAfterUpdate){
-									if(!updateDetails.after.includes(tri.Name)){
-										updateDetails.after.push(tri.Name);
+									if(!updateDetails.after.includes(tri)){
+										updateDetails.after.push(tri);
 									}
 								}
 								if(tri.UsageBeforeDelete){
-									if(!deleteDetails.before.includes(tri.Name)){
-										deleteDetails.before.push(tri.Name);
+									if(!deleteDetails.before.includes(tri)){
+										deleteDetails.before.push(tri);
 									}
 								}
 								if(tri.UsageAfterDelete){
-									if(!deleteDetails.after.includes(tri.Name)){
-										deleteDetails.after.push(tri.Name);
+									if(!deleteDetails.after.includes(tri)){
+										deleteDetails.after.push(tri);
 									}
 								}
 								if(tri.UsageAfterUndelete){
-									if(!undeleteDetails.after.includes(tri.Name)){
-										undeleteDetails.after.push(tri.Name);
+									if(!undeleteDetails.after.includes(tri)){
+										undeleteDetails.after.push(tri);
 									}
 								}
 							}
@@ -456,7 +456,7 @@ function drawMermaid(typ){
     diagram+= `    section Before \n`;
   if (obj.before && obj.before.length > 0) {
     obj.before.forEach(step => {
-      diagram += `      [Trigger] ${step} : 5\n`;
+      diagram += `      [Trigger] ${step.Name} : 5\n`;
     });
 	
   }
@@ -466,7 +466,7 @@ function drawMermaid(typ){
   if (obj.after && obj.after.length > 0) {
     
     obj.after.forEach(step => {
-      diagram += `      [Trigger] ${step} : 5\n`;
+      diagram += `      [Trigger] ${step.Name} : 5\n`;
     });
   }
   
