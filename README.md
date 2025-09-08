@@ -1,11 +1,13 @@
-Overview
-This Chrome Extension helps Salesforce developers visualize the execution order of key automation components when performing DML operations (Insert, Update, Delete) on Salesforce objects using Mermaid and Shoelace for UI.
-Features
+Overview:
+ This Browser Extension helps Salesforce developers visualize the execution order of key automation components when performing DML operations (Insert, Update, Delete) on Salesforce objects using Mermaid and Shoelace for UI.
+
+Features:
 •	Display Apex Triggers execution order (Before Insert, After Update, etc.).
 •	Display Total No of Custom Rules Validation Rules applied during the operation.
 •	Display Total No of Assignment Rules triggered during DML operations.
 •	Visualize the execution flow using Mermaid.js journey diagrams.
 •	Dynamically generate diagrams per selected operation (Insert, Update, etc.).
+
 How It Works
 1.	Queries Salesforce Tooling API for:
    - ApexTrigger
