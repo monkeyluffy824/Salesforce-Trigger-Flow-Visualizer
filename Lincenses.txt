@@ -3,3 +3,6 @@ https://github.com/mermaid-js/mermaid/blob/develop/LICENSE
 
 Shoelace  - MIT License
 https://github.com/shoelace-style/shoelace/blob/next/LICENSE.md
+
+pdf.js - Apache License 2.0
+https://github.com/mozilla/pdf.js/blob/master/LICENSE 
