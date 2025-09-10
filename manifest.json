@@ -21,7 +21,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["dist/mermaid-bundle.js"],
+      "resources": ["dist/mermaid-bundle.js","dist/popup-bundle.js"],
       "matches": ["<all_urls>"]
     }
 ]

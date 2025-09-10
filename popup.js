@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
 			 alert("No Active salesforce login found, please login to your org.");
 		 }else{
 			 salesforceDomain=salesforceDomain.replace("lightning.force.com","my.salesforce.com");
-		 console.log(salesforceDomain);
 		 chrome.cookies.getAll({ name: "sid", domain: salesforceDomain}, async (cookies) => {
 		const sidCookie = cookies.find(c => c.domain.includes("my.salesforce.com"));
 		if (!sidCookie) {
@@ -42,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 		  objectsList=objects;
 		  objNameMap= dummyMap;
-		  console.log(objNameMap);
 		  
 		  let container = document.querySelector('.alert-toast');
 		  let alertSuccess = container.querySelector(`sl-alert[variant="success"]`);
@@ -60,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  }
 		  
 		} catch (e) {
-		  console.log('error occured', e);
+		  console.error(e);
 		}
 	  });
 		 }
@@ -69,12 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
   document.getElementById("urlMenu").addEventListener("sl-change", (event)=>{
 	  const selectedVal= event.target.value;
-	  console.log(selectedVal,"from menu");
 	  const tab= selectedVal;
 	  if(tab){
 		    const ur = new URL(tab);
 		    salesforceDomain= ur.hostname;
-			console.log(salesforceDomain);
 			const  buttonElement= document.getElementById('connectToOrgViaBackend');
 			buttonElement.disabled=false;
 	   }
@@ -98,6 +94,9 @@ let deleteSObject= undefined;
 let undeleteSObject= undefined;
 let selectedObjectValidCount=0;
 let selectedObjectAssignCount=0;
+let documentMetaData=undefined;
+let tableImage=undefined;
+let mermaidImage=undefined;
 async function getSalesforceSessionDetails(){
 	let queryOptions={
 		lastFocusedWindow: true,
@@ -107,7 +106,6 @@ async function getSalesforceSessionDetails(){
 	await chrome.tabs.query(queryOptions,(tabs)=>{
 		const  buttonElement= document.getElementById('connectToOrgViaBackend');
 		buttonElement.disabled=true;
-		console.log(tabs);
 		let setURLS = new Set();
 		if(tabs.length>0){
 			const urlMenu= document.getElementById('urlMenu');
@@ -122,7 +120,7 @@ async function getSalesforceSessionDetails(){
 			}
 			
 		}else{
-			console.log("NO salesforce login found");
+			alert("No salesforce login found");
 		}
 	});
 }
@@ -144,7 +142,6 @@ function displaySObjects(){
 		searchInput.type="text"
 		searchInput.id="SerachSObjects";
 		searchInput.addEventListener("sl-change", (event)=>{
-			console.log('serach bar value', event.target.value);
 			let searchInput=event.target.value;
 			displayList=objectsList.filter(item=>{
 				if(item.toLowerCase().includes(searchInput.toLowerCase())){
@@ -162,7 +159,6 @@ function displaySObjects(){
 		menu.classList.add("table");
 		menu.id="SObjectMenuTable";
 		creationOfMenuItems(menu);
-		console.log(menu);
 		displaySection.appendChild(menu);
 	}
 }
@@ -191,7 +187,6 @@ function creationOfMenuItems(menuElement){
 			detailsWindow.id='detailsWindow';
 			sObjectWindow.appendChild(addingDetailsWindow(detailsWindow));
 		}
-		console.log(selectedSObject);
 	});
 	
 	
@@ -248,6 +243,18 @@ function addingDetailsWindow(detailsWindow){
 						getTriggerDetailsButton.textContent="Get Trigger Details";
 						buttonsDiv.appendChild(getTriggerDetailsButton);
 						getTriggerDetailsButton.addEventListener('click',async ()=>{
+							let buttonsList=['Insert','Update','Delete','undelete'];
+							let CRUDButtons= document.getElementById('CRUDButtons');
+							if(CRUDButtons){
+								CRUDButtons.innerHTML='';
+							}else{
+								let createCRUD= document.createElement('div');
+								createCRUD.id='CRUDButtons';
+								createCRUD.classList.add('bwindow');
+								CRUDButtons=createCRUD;
+								
+							}
+							buttonsDiv.appendChild(CRUDButtons);
 							let validationQuery= `Select Count(Id) FROM ValidationRule where Active =true AND EntityDefinition.label = '${selectedSObject}'`;
 							const validationDetails= await toolingQuery(validationQuery);
 							let validationRecords= validationDetails.records;
@@ -308,18 +315,6 @@ function addingDetailsWindow(detailsWindow){
 							updateSobject=updateDetails;
 							deleteSObject=deleteDetails;
 							undeleteSObject=undeleteDetails;
-							let buttonsList=['Insert','Update','Delete','undelete'];
-							let CRUDButtons= document.getElementById('CRUDButtons');
-							if(CRUDButtons){
-								CRUDButtons.innerHTML='';
-							}else{
-								let createCRUD= document.createElement('div');
-								createCRUD.id='CRUDButtons';
-								createCRUD.classList.add('bwindow');
-								CRUDButtons=createCRUD;
-								
-							}
-							buttonsDiv.appendChild(CRUDButtons);
 							for(let b of buttonsList){
 								const button= document.createElement('sl-button');
 								button.size="medium";
@@ -329,7 +324,6 @@ function addingDetailsWindow(detailsWindow){
 								CRUDButtons.appendChild(button);
 								button.addEventListener('click', ()=>{
 									let diag= drawMermaid(b);
-									console.log(diag);
 									const detailsWindow= document.getElementById('detailsWindow');
 									const mermaidDivDummy= document.getElementById('mermaidDiagram');
 									if(mermaidDivDummy){
@@ -347,7 +341,7 @@ function addingDetailsWindow(detailsWindow){
 						
 						detailsWindow.appendChild(buttonsDiv);
 				}catch (e) {
-					console.log('error occured', e);
+					console.error(e);
 				}
 			});
 			detailsWindow.appendChild(getDetailsButton);
@@ -395,7 +389,7 @@ async function createDetailsJSON(body){
 					  dummyDetails.totalQuickActions=quickBody.length;
 			}  
 	}catch (e) {
-		console.log('error occured', e);
+		console.error(e);
     }
 	
 	return dummyDetails;
@@ -432,10 +426,9 @@ async function toolingQuery(query){
 			}
 		  });
 		  const body= await queryRes.json();
-		  console.log(JSON.stringify(body));
 		  return body;
 	}catch(e){
-		console.log(e);
+		console.error(e);
 	}
 	
 }
@@ -479,11 +472,105 @@ function drawMermaid(typ){
 
 function renderMermaidDiagram(diagramDefinition) {
     const mermaidContainer = document.getElementById('mermaidDiagram');
+	const detailsWindow=document.getElementById('detailsWindow');
 	mermaidContainer.innerHTML = '';
 	const newDiagramDiv = document.createElement('div');
     newDiagramDiv.className = 'mermaid';
     newDiagramDiv.textContent = diagramDefinition;
+	newDiagramDiv.id='SVGButton'
 	mermaidContainer.appendChild(newDiagramDiv);
-	console.log(mermaidContainer);
+	let buttonDiv= undefined;
+	const buttonDivDummy= document.getElementById('getPDFButton');
+	if(buttonDivDummy){
+		buttonDivDummy.innerHTML='';
+		buttonDiv=buttonDivDummy;
+	}else{
+		const buttonWindow= document.createElement('div');
+		buttonWindow.id='getPDFButton';
+		buttonWindow.classList.add('bwindow');
+		detailsWindow.appendChild(buttonWindow);
+		buttonDiv=buttonWindow;
+	}
+	const getPDFButton= document.createElement('sl-button');
+	getPDFButton.size="medium";
+	getPDFButton.pill= true;
+	getPDFButton.variant="default";
+	getPDFButton.textContent=`Get ${selectedSObject} Details in PDF`;
+	getPDFButton.id='getPDFBUtton';
+	getPDFButton.addEventListener('click',()=>{
+		createPDF();
+	});
+	buttonDiv.appendChild(getPDFButton);
+	
     mermaid.init(undefined, newDiagramDiv);
+
+}
+
+
+
+function createPDF(){
+	const { jsPDF } = window.jspdf;
+
+        const doc = new jsPDF();
+        doc.setFontSize(16);
+		doc.setFont("helvetica", "bold");
+        doc.text(`${selectedSObject} Execution Flow Report`, 50, 20);
+		
+		let secHeading=`${selectedSObject} Details:\n`;
+		let pdfBody=``;
+		doc.setFont("bolditalic", "bold");
+        doc.text(secHeading, 10, 40);
+		let autoLineHeight=50;
+		for(let k in detailsSObject){
+			pdfBody+= `    ${labelMap.get(k)}: ${detailsSObject[k]}\n`;
+		}
+		pdfBody+=`    Total Custom Validation Rules: ${selectedObjectValidCount}\n`;
+		pdfBody+=`    Total Custom Assignment Rules: ${selectedObjectAssignCount}\n`;
+		const lines=pdfBody.split('\n');
+		doc.setFont("helvetica", "normal");
+		doc.text(lines,10,50);
+		autoLineHeight+= lines.length*7;
+		const trigSecHeading=`Trigger Details:`;
+		doc.setFont("bolditalic", "bold");
+        doc.text(trigSecHeading, 10, autoLineHeight);
+		autoLineHeight+=10;
+		dmlOps=['Insert','Update','Delete','Undelete'];
+		let trigBody=``;
+		for(let typ of dmlOps){
+			let obj=undefined;
+			if(typ==='Insert'){
+				obj=insertSObject;
+			}else if(typ==='Update'){
+				obj=updateSobject;
+			}else if(typ==='Delete'){
+				obj=deleteSObject;
+			}else{
+				obj=undeleteSObject;
+			}
+		  if (obj.before && obj.before.length > 0) {
+			obj.before.forEach(step => {
+			  trigBody += `   Before ${typ}: ${step.Name}\n`;
+			});
+			
+		  }
+
+		  
+		  if (obj.after && obj.after.length > 0) {
+			
+			obj.after.forEach(step => {
+			    trigBody += `   After ${typ}: ${step.Name}\n`;
+			});
+		  }
+		}
+		
+		doc.setFont("helvetica", "normal");
+		if(!trigBody.length>0){
+			doc.text(`       No Active Triggers Found`,10,autoLineHeight);
+		}else{
+			const trigLines=trigBody.split('\n');
+			doc.text(trigLines,10,autoLineHeight);
+		}
+		
+		
+        doc.save(`${selectedSObject} execution-flow-report.pdf`);
 }
